@@ -92,7 +92,7 @@ LangChat/
 ## 1. Clone the repository
 
 ```bash
-git clone <YOUR_GITHUB_REPOSITORY_URL>
+git clone https://github.com/PiyushKumar23-12/ChatBot/tree/main
 cd LangChat
 ```
 
@@ -106,19 +106,6 @@ Create a Python virtual environment:
 python -m venv venv
 ```
 
-On Windows, activate it using:
-
-```powershell
-venv\Scripts\Activate.ps1
-```
-
-After activation, you should see:
-
-```text
-(venv)
-```
-
-at the beginning of your terminal prompt.
 
 ---
 
@@ -167,8 +154,6 @@ llm = ChatGoogleGenerativeAI(
     api_key=api_key
 )
 ```
-
-> Never commit your `.env` file or expose your API key publicly.
 
 ---
 
@@ -367,6 +352,100 @@ StrOutputParser
     ↓
 Final string
 ```
+# 🔎 LangSmith Tracing & Monitoring
+
+This project can be connected to **LangSmith** to trace and monitor the LangChain application.
+
+LangSmith helps track what happens inside the LangChain pipeline, making it easier to:
+
+* Debug chains
+* Inspect prompts and model responses
+* Monitor application runs
+* Understand execution flow
+* Evaluate and improve the application
+
+## Environment Variables
+
+Add your LangSmith API key to the `.env` file:
+
+```env
+LANGCHAIN_API_KEY=your_langsmith_api_key
+```
+
+Then configure LangChain tracing in the application:
+
+```python
+os.environ["LANGCHAIN_API_KEY"] = os.getenv("LANGCHAIN_API_KEY")
+
+os.environ["LANGCHAIN_TRACING_V2"] = "true"
+
+os.environ["LANGCHAIN_PROJECT"] = "streamlit-chatbot"
+```
+
+### What each variable does
+
+#### `LANGCHAIN_API_KEY`
+
+```python
+os.environ["LANGCHAIN_API_KEY"] = os.getenv("LANGCHAIN_API_KEY")
+```
+
+Provides the API key that allows the application to communicate with LangSmith.
+
+#### `LANGCHAIN_TRACING_V2`
+
+```python
+os.environ["LANGCHAIN_TRACING_V2"] = "true"
+```
+
+Enables LangChain tracing so that the application's LangChain executions can be recorded in LangSmith.
+
+#### `LANGCHAIN_PROJECT`
+
+```python
+os.environ["LANGCHAIN_PROJECT"] = "streamlit-chatbot"
+```
+
+Specifies the LangSmith project where the traces will be grouped.
+
+In this project, all chatbot traces are associated with:
+
+```text
+streamlit-chatbot
+```
+
+## How the Flow Works
+
+```text
+User
+  ↓
+Streamlit
+  ↓
+LangChain
+  ↓
+Prompt → LLM → Output Parser
+  ↓
+Response
+
+        │
+        └──────────────→ LangSmith
+                         ↓
+                    Trace / Monitor
+                    LangChain execution
+```
+
+## `.env` Example
+
+Your `.env` file can contain:
+
+```env
+GOOGLE_API_KEY=your_google_api_key
+
+LANGCHAIN_API_KEY=your_langsmith_api_key
+LANGCHAIN_TRACING_V2=true
+LANGCHAIN_PROJECT=streamlit-chatbot
+```
+
 
 ---
 
@@ -557,8 +636,6 @@ venv/
 __pycache__/
 *.pyc
 ```
-
-If an API key is accidentally pushed to GitHub, revoke it immediately and generate a new one.
 
 ---
 
